@@ -1,5 +1,0 @@
-🔎 Route Health Check — 2025-07-03 19:33:14.481902
-
-❌ VitalsSync — http://localhost:5000/vitalsync — Error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /vitalsync (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7aac4a2d4f20>: Failed to establish a new connection: [Errno 111] Connection refused'))
-❌ StaffTime — http://localhost:5000/stafftime — Error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /stafftime (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7aac4a30f2c0>: Failed to establish a new connection: [Errno 111] Connection refused'))
-❌ Spark History — http://localhost:5000/spark-history — Error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /spark-history (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7aac4a30f9e0>: Failed to establish a new connection: [Errno 111] Connection refused'))
