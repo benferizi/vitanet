@@ -13,7 +13,10 @@ Babel(app)
 
 # Register Blueprints
 from vitalsync import vitalsync_bp
+from bundle_api import bundle_bp
+
 app.register_blueprint(vitalsync_bp)
+app.register_blueprint(bundle_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
