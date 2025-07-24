@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: vitanet
+    env: python
+    region: ireland
+    branch: main
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+
