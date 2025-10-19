@@ -403,6 +403,17 @@ class UbuntuRepairTool:
             self.log_error(f"Error fixing GRUB: {e}")
             return False
     
+    def _is_systemctl_output_skip_line(self, line):
+        """Check if a systemctl output line should be skipped during parsing."""
+        stripped = line.strip()
+        if not stripped:
+            return True
+        if stripped.startswith('UNIT') or stripped.startswith('LOAD') or stripped.startswith('●'):
+            return True
+        if 'loaded units' in stripped.lower() or 'listed' in stripped.lower():
+            return True
+        return False
+    
     def repair_system_services(self):
         """Restart failed system services."""
         self.log_info("Checking for failed services...")
@@ -416,33 +427,33 @@ class UbuntuRepairTool:
             
             if result.returncode == 0:
                 lines = result.stdout.strip().split('\n')
-                failed_services = []
+                failed_units = []
                 
                 # Parse output more robustly
                 for line in lines:
-                    stripped = line.strip()
-                    # Skip empty lines, header lines, and footer lines
-                    if not stripped or stripped.startswith('UNIT') or stripped.startswith('●') or 'loaded units' in stripped.lower():
+                    if self._is_systemctl_output_skip_line(line):
                         continue
-                    # Extract service name (first column)
-                    parts = stripped.split()
-                    if parts and parts[0].endswith('.service'):
-                        failed_services.append(parts[0])
+                    
+                    # Extract unit name (first column)
+                    parts = line.strip().split()
+                    if parts and '.' in parts[0]:
+                        # Include all unit types: .service, .socket, .timer, .mount, etc.
+                        failed_units.append(parts[0])
                 
-                if failed_services:
-                    self.log_info(f"Found {len(failed_services)} failed services")
-                    for service in failed_services:
-                        self.log_info(f"Attempting to restart: {service}")
+                if failed_units:
+                    self.log_info(f"Found {len(failed_units)} failed units")
+                    for unit in failed_units:
+                        self.log_info(f"Attempting to restart: {unit}")
                         restart_result = self.run_command(
-                            ['systemctl', 'restart', service],
+                            ['systemctl', 'restart', unit],
                             check=False
                         )
                         if restart_result.returncode == 0:
-                            self.log_info(f"Successfully restarted: {service}")
+                            self.log_info(f"Successfully restarted: {unit}")
                 else:
-                    self.log_info("No failed services found")
+                    self.log_info("No failed units found")
                 
-                self.issues_fixed.append("Attempted to restart failed services")
+                self.issues_fixed.append("Attempted to restart failed units")
                 return True
             
             return False
