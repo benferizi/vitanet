@@ -223,7 +223,15 @@ class UbuntuRepairTool:
             try:
                 with open(sources_file, 'r') as f:
                     content = f.read()
-                    if not content.strip() or content.strip().startswith('#'):
+                    # Check if there are any non-comment, non-empty lines
+                    has_valid_source = False
+                    for line in content.split('\n'):
+                        stripped = line.strip()
+                        if stripped and not stripped.startswith('#'):
+                            has_valid_source = True
+                            break
+                    
+                    if not has_valid_source:
                         issue = "APT sources.list appears to be empty or all commented"
                         self.issues_found.append(issue)
                         self.log_warning(issue)
@@ -408,7 +416,18 @@ class UbuntuRepairTool:
             
             if result.returncode == 0:
                 lines = result.stdout.strip().split('\n')
-                failed_services = [line.split()[0] for line in lines[1:-6] if line.strip()]
+                failed_services = []
+                
+                # Parse output more robustly
+                for line in lines:
+                    stripped = line.strip()
+                    # Skip empty lines, header lines, and footer lines
+                    if not stripped or stripped.startswith('UNIT') or stripped.startswith('●') or 'loaded units' in stripped.lower():
+                        continue
+                    # Extract service name (first column)
+                    parts = stripped.split()
+                    if parts and parts[0].endswith('.service'):
+                        failed_services.append(parts[0])
                 
                 if failed_services:
                     self.log_info(f"Found {len(failed_services)} failed services")
@@ -590,14 +609,14 @@ Examples:
   # Run full repair (requires sudo)
   sudo python3 ubuntu_repair_ultimate_complete_v32.py
 
-  # Dry run to see what would be done
-  sudo python3 ubuntu_repair_ultimate_complete_v32.py --dry-run
+  # Dry run to see what would be done (no sudo required)
+  python3 ubuntu_repair_ultimate_complete_v32.py --dry-run
 
-  # Verbose output
+  # Verbose output (requires sudo)
   sudo python3 ubuntu_repair_ultimate_complete_v32.py --verbose
 
-  # Dry run with verbose output
-  sudo python3 ubuntu_repair_ultimate_complete_v32.py --dry-run --verbose
+  # Dry run with verbose output (no sudo required)
+  python3 ubuntu_repair_ultimate_complete_v32.py --dry-run --verbose
         """
     )
     
