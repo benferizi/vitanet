@@ -12,7 +12,7 @@ This script provides complete implementations for:
 - **Filesystem Checks**: Verify filesystem status and detect read-only mounts
 - **Network Configuration**: Restart NetworkManager and flush DNS cache
 - **Boot Loader Repair**: Update and repair GRUB configuration
-- **Service Management**: Detect and restart failed system services
+- **Service Management**: Detect and restart failed systemd units (all types)
 - **Log Cleanup**: Rotate and vacuum system logs to free up space
 - **System Optimization**: Update locate/man databases and sync filesystems
 - **Comprehensive Reporting**: Detailed logs and reports of all operations
@@ -86,7 +86,7 @@ python3 ubuntu_repair_ultimate_complete_v32.py --dry-run --verbose
 - Restarts NetworkManager service
 - Flushes DNS cache
 - Updates GRUB bootloader configuration
-- Restarts failed system services
+- Restarts failed systemd units (all types: .service, .socket, .timer, .mount, etc.)
 - Rotates and vacuums system logs
 
 ### 4. Optimization
@@ -137,7 +137,7 @@ Issues Fixed:
   2. Cleaned package cache and removed unnecessary packages
   3. Restarted NetworkManager service
   4. Updated GRUB bootloader configuration
-  5. Attempted to restart failed services
+  5. Attempted to restart failed units
   6. Cleaned system logs
   7. Performed system optimization
 ============================================================
